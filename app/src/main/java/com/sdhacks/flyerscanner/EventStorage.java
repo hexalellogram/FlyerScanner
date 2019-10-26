@@ -36,7 +36,7 @@ public class EventStorage
                         String locationString, String comment, File attachmentImage)
             throws IOException
     {
-        PropertyList<Property> propertyList = new PropertyList();
+        PropertyList<Property> propertyList = new PropertyList<>();
 
         propertyList.add(new DtStart(new net.fortuna.ical4j.model.Date(startDate)));
         propertyList.add(new DtEnd(new net.fortuna.ical4j.model.Date(endDate)));
@@ -51,7 +51,7 @@ public class EventStorage
 
         propertyList.add(new Attach(bArray));
 
-        VEvent newEv = new VEvent();
+        VEvent newEv = new VEvent(propertyList);
         VEvent findExisting = eventExists(newEv);
 
         int returnCode = 0;
