@@ -31,6 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/internalLinearLayout"
         android:layout_width="409dp"
         android:layout_height="673dp"
         android:layout_marginTop="8dp"

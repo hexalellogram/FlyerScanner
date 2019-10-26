@@ -49,4 +49,8 @@ public class ComparableCalendar extends Calendar implements Comparable<Comparabl
     {
         return ((VEvent) this.getComponent("VEVENT")).getEndDate().toString();
     }
+
+    public VEvent getVEvent() {
+        return (VEvent) this.getComponent("VEVENT");
+    }
 }
