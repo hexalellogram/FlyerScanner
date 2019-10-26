@@ -3,35 +3,32 @@ package com.sdhacks.flyerscanner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-
 import com.camerakit.CameraKitView;
-import com.jpegkit.Jpeg;
-import com.jpegkit.JpegImageView;
-
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
 
     private CameraKitView cameraKitView;
-    private ImageView imageView;
-    private Button button;
+    private Button photoButton;
+    private Button listButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ConstraintLayout constraintLayout = findViewById(R.id.constraintLayout);
+        constraintLayout.setBackgroundColor(Color.BLACK);
+
         cameraKitView = findViewById(R.id.camera);
-        imageView = findViewById(R.id.imageView);
-        button = findViewById(R.id.button);
-        button.setOnClickListener(photoOnClickListener);
+        photoButton = findViewById(R.id.photoButton);
+        listButton = findViewById(R.id.listButton);
+
+        photoButton.setOnClickListener(photoOnClickListener);
     }
 
     private View.OnClickListener photoOnClickListener = new View.OnClickListener() {
@@ -45,11 +42,26 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             try
                             {
-                                String path = getFilesDir().getAbsolutePath() + "//photo.jpg";
+                                // TODO handle the photo being taken
+
+                                /*final Jpeg jpeg = new Jpeg(photo);
+                                imageView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageView.setJpeg(jpeg);
+                                    }
+                                });*/
+                                //Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+                                //imageView.setImageBitmap(bitmap);
+                                /*String path = getFilesDir().getAbsolutePath() + "//photo.jpg";
+                                File file = new File(path);
+                                if(file.exists()) {
+                                    file.delete();
+                                }
                                 FileOutputStream stream = new FileOutputStream(path);
                                 stream.write(photo);
                                 Bitmap bitmap = BitmapFactory.decodeFile(path);
-                                imageView.setImageBitmap(bitmap);
+                                imageView.setImageBitmap(bitmap);*/
                             } catch (Exception e1)
                             {
                                 e1.printStackTrace();
@@ -89,5 +101,10 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void onListButtonClicked(View view) {
+        Intent listIntent = new Intent(this, ListActivity.class);
+        startActivity(listIntent);
     }
 }
