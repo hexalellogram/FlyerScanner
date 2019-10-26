@@ -36,7 +36,7 @@ public class EventStorage
      */
     public int addEvent(String summary, java.util.Date startDate, java.util.Date endDate,
                         String locationString, String comment, File attachmentImage)
-            throws IOException
+            throws IOException, Exception
     {
         PropertyList<Property> propertyList = new PropertyList<>();
 
@@ -59,7 +59,9 @@ public class EventStorage
         int returnCode = 0;
 
         if (findExisting != null) {
-            deleteEvent(findExisting);
+            boolean result = deleteEvent(findExisting);
+                if (!result)
+                    throw new Exception();
             returnCode = 1;
         }
 
