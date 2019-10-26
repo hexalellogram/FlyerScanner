@@ -1,5 +1,6 @@
 package com.sdhacks.flyerscanner;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
@@ -14,6 +15,7 @@ import net.fortuna.ical4j.model.property.Summary;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.PriorityQueue;
 
@@ -91,6 +93,21 @@ public class EventStorage
     public PriorityQueue<ComparableCalendar> getQueue()
     {
         return this.queue;
+    }
+
+    public File icsExport(String path, ComparableCalendar cal) throws IOException
+    {
+        File ics =  new File(path);
+        if (!ics.exists())
+            ics.createNewFile();
+
+        FileOutputStream fos = new FileOutputStream(path);
+        CalendarOutputter outputter = new CalendarOutputter();
+        // need to test if this actually outputs the data to the file or just a buffer
+        // assuming it outputs for the file for now
+        outputter.output(cal, fos);
+
+        return ics;
     }
 
 }
