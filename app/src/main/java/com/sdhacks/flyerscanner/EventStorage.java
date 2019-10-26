@@ -28,15 +28,11 @@ public class EventStorage
 
     private PriorityQueue<ComparableCalendar> queue;
 
-    public EventStorage()
+    public EventStorage(String folderPath) throws IOException, ParserException
     {
         this.queue = new PriorityQueue<>();
-    }
-
-    public EventStorage(Context c) throws IOException, ParserException
-    {
-        this.queue = new PriorityQueue<>();
-        File[] icsFolder = c.getFilesDir().listFiles();
+        File folder = new File(folderPath);
+        File[] icsFolder = folder.listFiles();
         for (File f : icsFolder)
         {
             if (f != null)
