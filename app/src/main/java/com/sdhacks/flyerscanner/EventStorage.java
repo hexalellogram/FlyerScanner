@@ -37,8 +37,7 @@ public class EventStorage
             {
                 if (f.getAbsolutePath().endsWith(".ics"))
                 {
-                    FileInputStream fis = null;
-                    fis = new FileInputStream(f.getAbsolutePath());
+                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
                     CalendarBuilder builder = new CalendarBuilder();
                     ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
                     queue.add(calendar);
