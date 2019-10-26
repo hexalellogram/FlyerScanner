@@ -1,7 +1,5 @@
 package com.sdhacks.flyerscanner;
 
-import android.content.Context;
-
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.data.ParserException;
