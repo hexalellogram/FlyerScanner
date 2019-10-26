@@ -1,11 +1,19 @@
 package com.sdhacks.flyerscanner;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 
 public class ComparableCalendar extends Calendar implements Comparable<ComparableCalendar>
 {
+
+    public ComparableCalendar(ComponentList<CalendarComponent> list)
+    {
+        super(list);
+    }
+
     public int compareTo(ComparableCalendar other)
     {
         VEvent myEv = (VEvent) this.getComponent("VEVENT");
