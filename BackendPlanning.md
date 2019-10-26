@@ -32,3 +32,6 @@
 - Sorting the list of already added events by different criteria (Name, Start Date, etc.)
     - would need a KD tree (which is why we're not doing this in the first iteration)
 - Handling fliers for recurring events
+- modifying existing events in the user's calendar
+    - right now, new events can be added to the user's calendar by exporting the .ics file and importing it into the user's calendar app.
+    - we are unable to modify existing events that have added to the user's calendar in the past via the above method.
