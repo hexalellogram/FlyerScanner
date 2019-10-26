@@ -6,7 +6,7 @@ import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Attach;
-import net.fortuna.ical4j.model.property.Comment;
+import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.Location;
@@ -30,9 +30,7 @@ public class EventStorage
     /*
     Return codes:
     0 = added new event
-    1 = modified existing event (handled by modify method)
-    2 = failed to add event
-    3 = failed to modify event (handled by modify method)
+    1 = modified existing event
      */
     public int addEvent(String summary, java.util.Date startDate, java.util.Date endDate,
                         String locationString, String comment, File attachmentImage)
@@ -43,60 +41,56 @@ public class EventStorage
         propertyList.add(new DtStart(new net.fortuna.ical4j.model.Date(startDate)));
         propertyList.add(new DtEnd(new net.fortuna.ical4j.model.Date(endDate)));
         propertyList.add(new Summary(summary));
-        propertyList.add(new Comment(comment));
+        propertyList.add(new Description(comment));
         propertyList.add(new Location(locationString));
 
         FileInputStream fis = new FileInputStream(attachmentImage);
-        // unsafe as image could be larger than 2.5MB
-        // TODO read the attachment image safely
-        byte[] bArray = new byte[(int)attachmentImage.length()];
+        byte[] bArray = new byte[(int) attachmentImage.length()];
         fis.read(bArray);
         fis.close();
 
         propertyList.add(new Attach(bArray));
 
         VEvent newEv = new VEvent();
+        VEvent findExisting = eventExists(newEv);
 
-        if (eventExists(newEv))
-        {
-            return modifyEvent(newEv);
+        int returnCode = 0;
+
+        if (findExisting != null) {
+            deleteEvent(findExisting);
+            returnCode = 1;
         }
-        else
-        {
-            ComponentList<CalendarComponent> compList = new ComponentList<>();
-            compList.add(newEv);
-            ComparableCalendar cal = new ComparableCalendar(compList);
-            queue.add(cal);
-            return 0;
-        }
+
+        ComponentList<CalendarComponent> compList = new ComponentList<>();
+        compList.add(newEv);
+        ComparableCalendar cal = new ComparableCalendar(compList);
+        queue.add(cal);
+        return returnCode;
+
     }
 
     /*
-    Return codes:
-    0 = added new event (will never return 0 since that is done by the adding method)
-    1 = modified existing event
-    2 = failed to add event (will never return 2 since that is done by the adding method)
-    3 = failed to modify event
+    Returns a VEvent if a VEvent if the same name is found, else return false
      */
-    //TODO implement modifyEvent
-    private int modifyEvent(VEvent modified)
-    {
-
-    }
-
-    private boolean eventExists(VEvent testMe)
+    private VEvent eventExists(VEvent testMe)
     {
         for (ComparableCalendar current : queue)
         {
             VEvent currEv = (VEvent) current.getComponent("VEVENT");
-            if (testMe.equals(currEv))
-                return true;
+            if (testMe.getSummary().equals(currEv.getSummary()))
+                return testMe;
         }
-        return false;
+        return null;
     }
 
     public boolean deleteEvent(VEvent deleteMe)
     {
         return queue.remove(deleteMe);
     }
+
+    public PriorityQueue<ComparableCalendar> getQueue()
+    {
+        return this.queue;
+    }
+
 }
