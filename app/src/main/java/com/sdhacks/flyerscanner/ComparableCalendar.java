@@ -24,4 +24,29 @@ public class ComparableCalendar extends Calendar implements Comparable<Comparabl
 
         return myStartDate.compareTo(otherStartDate);
     }
+
+    public String getSummary()
+    {
+        return ((VEvent) this.getComponent("VEVENT")).getSummary().toString();
+    }
+
+    public String getDescription()
+    {
+        return ((VEvent) this.getComponent("VEVENT")).getDescription().toString();
+    }
+
+    public String getLocation()
+    {
+        return ((VEvent) this.getComponent("VEVENT")).getLocation().toString();
+    }
+
+    public String getStartDate()
+    {
+        return ((VEvent) this.getComponent("VEVENT")).getStartDate().toString();
+    }
+
+    public String getEndDate()
+    {
+        return ((VEvent) this.getComponent("VEVENT")).getEndDate().toString();
+    }
 }
