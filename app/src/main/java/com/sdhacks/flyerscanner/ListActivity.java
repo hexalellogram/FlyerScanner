@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import net.fortuna.ical4j.model.component.VEvent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -28,7 +29,11 @@ public class ListActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.internalLinearLayout);
 
         try {
-            eventStorage = new EventStorage(getFilesDir().getAbsolutePath() + "//ics//");
+            File folder = new File(getFilesDir().getAbsolutePath() + "//ics//");
+            if(!folder.exists()) {
+                folder.mkdir();
+            }
+            eventStorage = new EventStorage(folder.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
