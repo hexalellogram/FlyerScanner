@@ -1,6 +1,10 @@
 package com.sdhacks.flyerscanner;
 
+import android.content.Context;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
@@ -27,6 +31,27 @@ public class EventStorage
     public EventStorage()
     {
         this.queue = new PriorityQueue<>();
+    }
+
+    public EventStorage(Context c) throws IOException, ParserException
+    {
+        this.queue = new PriorityQueue<>();
+        File[] icsFolder = c.getFilesDir().listFiles();
+        for (File f : icsFolder)
+        {
+            if (f != null)
+            {
+                if (f.getAbsolutePath().endsWith(".ics"))
+                {
+                    FileInputStream fis = null;
+                    fis = new FileInputStream(f.getAbsolutePath());
+                    CalendarBuilder builder = new CalendarBuilder();
+                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
+                    queue.add(calendar);
+                }
+            }
+        }
+
     }
 
     /*
