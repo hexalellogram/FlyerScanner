@@ -44,8 +44,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void onScanAnotherClick(View view) {
-        Intent cameraIntent = new Intent(this, MainActivity.class);
-        startActivity(cameraIntent);
+        finish();
     }
 
     public void onDeleteClick(View view) {
