@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.PriorityQueue;
 
 public class EventStorage
@@ -62,6 +63,13 @@ public class EventStorage
                         String locationString, String comment, File attachmentImage)
             throws IOException, Exception
     {
+        if (endDate == null)
+        {
+            Calendar cal = Calendar.getInstance(); // creates calendar
+            cal.setTime(startDate); // sets calendar time/date
+            cal.add(Calendar.HOUR_OF_DAY, 2); // adds one hour
+            endDate = cal.getTime(); // returns new date object, one hour in the future
+        }
         PropertyList<Property> propertyList = new PropertyList<>();
 
         DtStart start = new DtStart();
