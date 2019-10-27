@@ -23,7 +23,7 @@ public class ListActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.internalLinearLayout);
 
         try {
-            File folder = new File(getFilesDir().getAbsolutePath() + "//ics//");
+            File folder = new File(getFilesDir().getAbsolutePath() + "//ics//queue.json");
             if(!folder.exists()) {
                 folder.mkdir();
             }

@@ -46,11 +46,10 @@ public class EventStorage
         // queue.json is the JSON file
         this.queue = new PriorityQueue<>();
         File folder = new File(folderPath);
-        File[] icsFolder = folder.listFiles();
-        File json = icsFolder[0];
+        File json = folder;
         if(json == null)
         {
-            json = new File(this.fp + "/queue.json");
+            json = new File(this.fp);
             json.createNewFile();
         }
 
@@ -86,7 +85,7 @@ public class EventStorage
         try
         {
             // wipe the file
-            PrintWriter write = new PrintWriter(file);
+            PrintWriter write = new PrintWriter(new File(fp));
             write.print("");
             write.close();
 
@@ -126,60 +125,54 @@ public class EventStorage
                         String locationString, String comment, byte[] attachmentImage)
     {
         int returnCode = 0;
-        try {
-            if (endDate == null) {
-                Calendar cal = Calendar.getInstance(); // creates calendar
-                cal.setTime(startDate); // sets calendar time/date
-                cal.add(Calendar.HOUR_OF_DAY, 2); // add two hours
-                endDate = cal.getTime(); // returns new date object, two hours in the future
-            }
-            PropertyList<Property> propertyList = new PropertyList<>();
-
-            DtStart start = new DtStart();
-            DtEnd end = new DtEnd();
-
-            start.setDate(new net.fortuna.ical4j.model.DateTime(startDate));
-            end.setDate(new net.fortuna.ical4j.model.DateTime(endDate));
-
-            propertyList.add(start);
-            propertyList.add(end);
-
-            propertyList.add(new Summary(summary));
-            propertyList.add(new Description(comment));
-            propertyList.add(new Location(locationString));
-
-            long timestamp = Instant.now().toEpochMilli();
-            propertyList.add(new DtStamp(new DateTime(timestamp)));
-            String uidString = timestamp + "@" + android.os.Build.MODEL;
-            propertyList.add(new Uid(uidString)); // right now hostname is hardcoded
-
-            propertyList.add(new Attach(attachmentImage));
-
-            VEvent newEv = new VEvent(propertyList);
-            VEvent findExisting = eventExists(newEv);
-
-            if (findExisting != null) {
-                boolean result = deleteEvent(findExisting);
-                if (!result)
-                {
-                    returnCode = 2;
-                    return returnCode;
-                }
-                returnCode = 1;
-            }
-
-            ComponentList<CalendarComponent> compList = new ComponentList<>();
-            compList.add(newEv);
-            PropertyList<Property> calPropList = new PropertyList<>();
-            calPropList.add(new ProdId("com.sdhacks.flyerscanner"));
-            calPropList.add(Version.VERSION_2_0);
-            ComparableCalendar cal = new ComparableCalendar(calPropList, compList);
-            queue.add(cal);
+        if (endDate == null) {
+            Calendar cal = Calendar.getInstance(); // creates calendar
+            cal.setTime(startDate); // sets calendar time/date
+            cal.add(Calendar.HOUR_OF_DAY, 2); // add two hours
+            endDate = cal.getTime(); // returns new date object, two hours in the future
         }
-        catch(IOException ex)
-        {
-            returnCode = 2;
+        PropertyList<Property> propertyList = new PropertyList<>();
+
+        DtStart start = new DtStart();
+        DtEnd end = new DtEnd();
+
+        start.setDate(new DateTime(startDate));
+        end.setDate(new DateTime(endDate));
+
+        propertyList.add(start);
+        propertyList.add(end);
+
+        propertyList.add(new Summary(summary));
+        propertyList.add(new Description(comment));
+        propertyList.add(new Location(locationString));
+
+        long timestamp = Instant.now().toEpochMilli();
+        propertyList.add(new DtStamp(new DateTime(timestamp)));
+        String uidString = timestamp + "@" + android.os.Build.MODEL;
+        propertyList.add(new Uid(uidString)); // right now hostname is hardcoded
+
+        propertyList.add(new Attach(attachmentImage));
+
+        VEvent newEv = new VEvent(propertyList);
+        VEvent findExisting = eventExists(newEv);
+
+        if (findExisting != null) {
+            boolean result = deleteEvent(findExisting);
+            if (!result)
+            {
+                returnCode = 2;
+                return returnCode;
+            }
+            returnCode = 1;
         }
+
+        ComponentList<CalendarComponent> compList = new ComponentList<>();
+        compList.add(newEv);
+        PropertyList<Property> calPropList = new PropertyList<>();
+        calPropList.add(new ProdId("com.sdhacks.flyerscanner"));
+        calPropList.add(Version.VERSION_2_0);
+        ComparableCalendar cal = new ComparableCalendar(calPropList, compList);
+        queue.add(cal);
         return returnCode;
 
     }

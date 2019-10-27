@@ -97,6 +97,17 @@ public class ConfirmActivity extends AppCompatActivity {
             System.out.println("Time is " + millisToAdd);
 
             Date date = new Date(millisToAdd); // Convert mDate to date TODO
+            if (ListActivity.eventStorage == null){
+                File folder = new File(getFilesDir().getAbsolutePath() + "//ics//");
+                if(!folder.exists()) {
+                    folder.mkdir();
+                }
+                File f = new File(folder.getAbsolutePath() + "/queue.json");
+                if (!f.exists()){
+                    f.createNewFile();
+                }
+                ListActivity.eventStorage = new EventStorage(folder.getAbsolutePath() + "/queue.json");
+            }
             ListActivity.eventStorage.addEvent(mOrg, date, null, mLoc, mOcrText, null);
         } catch (Exception ex) {
             ex.printStackTrace();
