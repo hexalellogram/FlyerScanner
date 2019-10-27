@@ -3,15 +3,19 @@ package com.sdhacks.flyerscanner;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
+
+import java.util.GregorianCalendar;
 
 public class ComparableCalendar extends Calendar implements Comparable<ComparableCalendar>
 {
 
-    public ComparableCalendar(ComponentList<CalendarComponent> list)
+    public ComparableCalendar(PropertyList<Property> pl, ComponentList<CalendarComponent> list)
     {
-        super(list);
+        super(pl, list);
     }
 
     public int compareTo(ComparableCalendar other)
@@ -27,27 +31,40 @@ public class ComparableCalendar extends Calendar implements Comparable<Comparabl
 
     public String getSummary()
     {
-        return ((VEvent) this.getComponent("VEVENT")).getSummary().toString();
+        return ((VEvent) this.getComponent("VEVENT")).getSummary().getValue();
     }
 
     public String getDescription()
     {
-        return ((VEvent) this.getComponent("VEVENT")).getDescription().toString();
+        return ((VEvent) this.getComponent("VEVENT")).getDescription().getValue();
     }
 
     public String getLocation()
     {
-        return ((VEvent) this.getComponent("VEVENT")).getLocation().toString();
+        return ((VEvent) this.getComponent("VEVENT")).getLocation().getValue();
     }
 
-    public String getStartDate()
+    /*
+    Note: Calendars returned have times im GMT all the time, no matter what the user's time zone
+     */
+    public java.util.Calendar getStartDate()
     {
-        return ((VEvent) this.getComponent("VEVENT")).getStartDate().toString();
+        java.util.Date date = ((VEvent)this.getComponent("VEVENT")).getStartDate().getDate();
+        java.util.Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return cal;
+
     }
 
-    public String getEndDate()
+    /*
+    Note: Calendars returned have times im GMT all the time, no matter what the user's time zone
+     */
+    public java.util.Calendar getEndDate()
     {
-        return ((VEvent) this.getComponent("VEVENT")).getEndDate().toString();
+        java.util.Date date = ((VEvent)this.getComponent("VEVENT")).getEndDate().getDate();
+        java.util.Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return cal;
     }
 
     public VEvent getVEvent() {
