@@ -21,35 +21,91 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.PriorityQueue;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
 
 public class EventStorage
 {
 
     private PriorityQueue<ComparableCalendar> queue;
+    private String fp;
 
     public EventStorage(String folderPath) throws IOException, ParserException
     {
+        this.fp = folderPath;
+
+        // queue.json is the JSON file
         this.queue = new PriorityQueue<>();
         File folder = new File(folderPath);
         File[] icsFolder = folder.listFiles();
-        for (File f : icsFolder)
+        File json = icsFolder[0];
+        if(json == null)
         {
-            if (f != null)
+            json = new File(this.fp + "/queue.json");
+            json.createNewFile();
+        }
+
+        Gson JSONConverter = new Gson();
+
+        try
+        {
+            Scanner readFile = new Scanner(json);
+            while (readFile.hasNextLine()) //  loop through file lines
             {
-                if (f.getAbsolutePath().endsWith(".ics"))
-                {
-                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
-                    CalendarBuilder builder = new CalendarBuilder();
-                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
-                    queue.add(calendar);
-                }
+                // Convert the String into a ComparableCalendar object.
+                ComparableCalendar toAdd = JSONConverter.fromJson(readFile.nextLine(),
+                        ComparableCalendar.class);
+
+                // add the ComparableCalendar object to the PQ.
+                this.queue.add(toAdd);
             }
+        }
+        catch(Exception e)
+        {
+            // Print any error message that results to the console.
+            e.printStackTrace();
+        }
+
+    }
+
+    public void exportJSON()
+    {
+        // Initialize a new Gson object to convert Issues into JSON strings for addition into the export file.
+        Gson JSONConverter = new Gson();
+        FileWriter writer;
+
+        try
+        {
+            // Initialize FileWriter to write Strings into JSON file.
+            writer = new FileWriter(fp + "/queue.json");
+
+            Iterator<ComparableCalendar> iter = this.queue.iterator();
+            // Loop through the PQ.
+            while(iter.hasNext())
+            {
+                ComparableCalendar nextObject = iter.next();
+                // Convert an issue object into a JSON-formatted representation of it, as a String.
+                String representationJSON = JSONConverter.toJson(nextObject);
+
+                // Write that String to the file.
+                writer.write(representationJSON + "\n");
+            }
+            // Close the FileWriter to conserve system resources.
+            writer.close();
+
+        }
+        catch (Exception e)
+        {
+            // Print any error messages that results to the console.
+            e.printStackTrace();
         }
 
     }
