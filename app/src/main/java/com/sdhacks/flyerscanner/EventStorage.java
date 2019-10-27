@@ -35,21 +35,21 @@ public class EventStorage
     public EventStorage(String folderPath) throws IOException, ParserException
     {
         this.queue = new PriorityQueue<>();
-//        File folder = new File(folderPath);
-//        File[] icsFolder = folder.listFiles();
-//        for (File f : icsFolder)
-//        {
-//            if (f != null)
-//            {
-//                if (f.getAbsolutePath().endsWith(".ics"))
-//                {
-//                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
-//                    CalendarBuilder builder = new CalendarBuilder();
-//                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
-//                    queue.add(calendar);
-//                }
-//            }
-//        }
+        File folder = new File(folderPath);
+        File[] icsFolder = folder.listFiles();
+        for (File f : icsFolder)
+        {
+            if (f != null)
+            {
+                if (f.getAbsolutePath().endsWith(".ics"))
+                {
+                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
+                    CalendarBuilder builder = new CalendarBuilder();
+                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
+                    queue.add(calendar);
+                }
+            }
+        }
 
     }
 
