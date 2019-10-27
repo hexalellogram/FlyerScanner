@@ -54,6 +54,17 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+    public void onExportClick(View view) {
+        for(CheckBox checkBox : map.keySet()) {
+            if(checkBox.isChecked()) {
+                ComparableCalendar currentCalendar = map.get(checkBox);
+                if(currentCalendar != null){
+                    //eventStorage.icsExport(, currentCalendar);
+                }
+            }
+        }
+    }
+
     private void addCheckBoxes(PriorityQueue<ComparableCalendar> queue) {
         for(ComparableCalendar currentCalendar : queue) {
             CheckBox checkBox = new CheckBox(getApplicationContext());

@@ -18,13 +18,13 @@ class NLP {
         StrictMode.setThreadPolicy(policy);
         //String text = "The event starts at 6:00 PM on Friday October 25th";
 
-        System.setProperty("aws.accessKeyId", "AKIAI5HVCTN2FVFUL54A"); // DO NOT COMMIT
-        System.setProperty("aws.secretKey", "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"); // DO NOT COMMIT
+        System.setProperty("aws.accessKeyId", ""); // DO NOT COMMIT
+        System.setProperty("aws.secretKey", ""); // DO NOT COMMIT
 
         // Create credentials using a provider chain. For more information, see
         // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
 
-        AWSCredentials credentials = new BasicAWSCredentials("AKIAI5HVCTN2FVFUL54A", "8S0Oxhurw1pppn/ET8FL7Tve5o0e0bYsl0D68u1L");
+        AWSCredentials credentials = new BasicAWSCredentials("", "");
         AmazonComprehendClient comprehendClient = new AmazonComprehendClient(credentials);
 
         //AWSCredentialsProvider awsCreds = DefaultAWSCredentialsProviderChain.getInstance();
