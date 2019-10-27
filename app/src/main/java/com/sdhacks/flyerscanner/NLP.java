@@ -1,5 +1,6 @@
 package com.sdhacks.flyerscanner;
 
+import android.content.Context;
 import android.os.StrictMode;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -12,14 +13,17 @@ import com.amazonaws.services.comprehend.model.KeyPhrase;
 import java.util.List;
 
 class NLP {
-    static List<KeyPhrase> NLP(String text){
+    static List<KeyPhrase> NLP(String text, Context currContext){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
         //String text = "The event starts at 6:00 PM on Friday October 25th";
 
-        System.setProperty("aws.accessKeyId", ""); // DO NOT COMMIT
-        System.setProperty("aws.secretKey", ""); // DO NOT COMMIT
+        String accessKey = currContext.getResources().getString(R.string.access_key);
+        String secretKey = currContext.getResources().getString(R.string.secret_key);
+
+        System.setProperty("aws.accessKeyId", accessKey); // DO NOT COMMIT
+        System.setProperty("aws.secretKey", secretKey); // DO NOT COMMIT
 
         // Create credentials using a provider chain. For more information, see
         // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html

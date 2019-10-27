@@ -106,6 +106,6 @@ public class ConfirmActivity extends AppCompatActivity {
                 }
             }
         }
-        return NLP.NLP(res);
+        return NLP.NLP(res, this);
     }
 }
