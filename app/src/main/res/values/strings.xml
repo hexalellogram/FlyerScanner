@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">FlyerScanner</string>
+    <string name="hello">Rate</string>
     <string name="image_bytes">IMAGE</string>
 </resources>

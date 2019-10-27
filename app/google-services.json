@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "192844720264",
+    "firebase_url": "https://ml-kit-b91f9.firebaseio.com",
+    "project_id": "ml-kit-b91f9",
+    "storage_bucket": "ml-kit-b91f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192844720264:android:bfab9856193c201a1c973d",
+        "android_client_info": {
+          "package_name": "com.sdhacks.flyerscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192844720264-e8dtjucgt70e6jcnt0c9gb3b26meuj77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCHsz54HYvPPHBx79D-MvICU7uLkH2ApU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "192844720264-e8dtjucgt70e6jcnt0c9gb3b26meuj77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
