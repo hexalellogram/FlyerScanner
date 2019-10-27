@@ -22,13 +22,13 @@ class NLP {
         String accessKey = currContext.getResources().getString(R.string.access_key);
         String secretKey = currContext.getResources().getString(R.string.secret_key);
 
-        System.setProperty("aws.accessKeyId", accessKey); // DO NOT COMMIT
-        System.setProperty("aws.secretKey", secretKey); // DO NOT COMMIT
+        //System.setProperty("aws.accessKeyId", accessKey); // DO NOT COMMIT
+        //System.setProperty("aws.secretKey", secretKey); // DO NOT COMMIT
 
         // Create credentials using a provider chain. For more information, see
         // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
 
-        AWSCredentials credentials = new BasicAWSCredentials("", "");
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         AmazonComprehendClient comprehendClient = new AmazonComprehendClient(credentials);
 
         //AWSCredentialsProvider awsCreds = DefaultAWSCredentialsProviderChain.getInstance();

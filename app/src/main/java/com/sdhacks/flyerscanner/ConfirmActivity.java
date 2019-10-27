@@ -44,6 +44,7 @@ public class ConfirmActivity extends AppCompatActivity {
                 public void run() {
                     imageView.setJpeg(jpeg);
                     runTextRecognition();
+                    Log.v("FlyerScanner-parse", "WE have parsed it all");
                 }
             });
         }
@@ -75,6 +76,9 @@ public class ConfirmActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(FirebaseVisionText texts) {
                                 keyPhrases = processTextRecognitionResult(texts);
+                                for (KeyPhrase key : keyPhrases){
+                                    Log.v("FlyerScanner-OCR", key.getText());
+                                }
                                 continueButton.setText(getResources().getString(R.string.continue_button_label));
                                 continueButton.setClickable(true);
                             }
