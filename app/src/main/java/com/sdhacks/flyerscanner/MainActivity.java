@@ -40,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            try
-                            {
+                            try {
+
+                                Intent confirmIntent = new Intent(getApplicationContext(), ConfirmActivity.class);
+                                confirmIntent.putExtra(getResources().getString(R.string.image_bytes), photo);
+                                startActivity(confirmIntent);
                                 // TODO handle the photo being taken
 
                                 /*final Jpeg jpeg = new Jpeg(photo);
@@ -62,9 +65,8 @@ public class MainActivity extends AppCompatActivity {
                                 stream.write(photo);
                                 Bitmap bitmap = BitmapFactory.decodeFile(path);
                                 imageView.setImageBitmap(bitmap);*/
-                            } catch (Exception e1)
-                            {
-                                e1.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
                     }).start();
