@@ -1,17 +1,11 @@
 package com.sdhacks.flyerscanner;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-
-import net.fortuna.ical4j.model.component.VEvent;
-
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 

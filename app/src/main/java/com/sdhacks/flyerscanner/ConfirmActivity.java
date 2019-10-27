@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.amazonaws.services.comprehend.model.KeyPhrase;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -56,7 +57,11 @@ public class ConfirmActivity extends AppCompatActivity {
     public void onContinueClick(View view) {
         // Do something with strings and call next activity
 
-        finish();
+        if(keyPhrases == null) {
+            Toast.makeText(getApplicationContext(), "No text found", Toast.LENGTH_LONG).show();
+        } else {
+            finish();
+        }
     }
 
     private void runTextRecognition() {
