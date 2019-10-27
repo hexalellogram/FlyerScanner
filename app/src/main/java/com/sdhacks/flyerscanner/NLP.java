@@ -2,18 +2,22 @@ package com.sdhacks.flyerscanner;
 
 import android.content.Context;
 import android.os.StrictMode;
+import android.util.Log;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.comprehend.AmazonComprehendClient;
+import com.amazonaws.services.comprehend.model.DetectEntitiesRequest;
+import com.amazonaws.services.comprehend.model.DetectEntitiesResult;
 import com.amazonaws.services.comprehend.model.DetectKeyPhrasesRequest;
 import com.amazonaws.services.comprehend.model.DetectKeyPhrasesResult;
+import com.amazonaws.services.comprehend.model.Entity;
 import com.amazonaws.services.comprehend.model.KeyPhrase;
 
 import java.util.List;
 
 class NLP {
-    static List<KeyPhrase> NLP(String text, Context currContext){
+    static List<Entity> NLP(String text, Context currContext){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -41,6 +45,13 @@ class NLP {
 
         // Call detectKeyPhrases API
         System.out.println("Calling DetectKeyPhrases");
+        DetectEntitiesRequest detectEntity = new DetectEntitiesRequest().withText(text).withLanguageCode("en");
+        DetectEntitiesResult res = comprehendClient.detectEntities(detectEntity);
+        List<Entity> ents = res.getEntities();
+        for (Entity e : ents){
+            Log.v("FlyerScanner-Entity", e.getText() + "\t\t" + e.getType());
+        }
+
         DetectKeyPhrasesRequest detectKeyPhrasesRequest = new DetectKeyPhrasesRequest().withText(text)
                 .withLanguageCode("en");
         DetectKeyPhrasesResult detectKeyPhrasesResult = comprehendClient.detectKeyPhrases(detectKeyPhrasesRequest);
@@ -48,7 +59,7 @@ class NLP {
 
         //detectKeyPhrasesResult.getKeyPhrases().forEach(System.out::println);
         //System.out.println("End of DetectKeyPhrases\n");
-        return keys;
+        return ents;
     }
 
 

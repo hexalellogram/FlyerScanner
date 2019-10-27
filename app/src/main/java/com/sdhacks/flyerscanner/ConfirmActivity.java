@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.services.comprehend.model.Entity;
 import com.amazonaws.services.comprehend.model.KeyPhrase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,13 +21,27 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.jpegkit.Jpeg;
 import com.jpegkit.JpegImageView;
+
+import net.fortuna.ical4j.data.ParserException;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ConfirmActivity extends AppCompatActivity {
 
     private byte[] picture;
     private Button continueButton;
-    private List<KeyPhrase> keyPhrases = null;
+    private List<Entity> keyEntities = null;
+
+    private String mOcrText;
+
+    private String mDate;
+    private String mOrg;
+    private String mLoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +66,47 @@ public class ConfirmActivity extends AppCompatActivity {
     }
 
     public void onRetakeClick(View view) {
-        Intent retakeIntent = new Intent(this, MainActivity.class);
-        startActivity(retakeIntent);
+        //Intent retakeIntent = new Intent(this, MainActivity.class);
+        //startActivity(retakeIntent);
+        finish();
     }
 
     public void onContinueClick(View view) {
+
+        // Find which str is the date/time/event name/etc
+        // Fill in relevant information to user form
+        try {
+            //EventStorage e = new EventStorage(new File(getFilesDir().getAbsolutePath() + "//ics//").getAbsolutePath());
+            String sourceDate = "2019-10-25";
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date myDate = format.parse(sourceDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(myDate);
+            cal.add(Calendar.DATE, 1);
+            myDate = cal.getTime();
+
+            long millisToAdd = 0;
+            if (mDate.toUpperCase().contains("PM")){
+                millisToAdd += 12 * 60 * 60 * 1000;
+            }
+
+            String d = mDate.substring(0, mDate.indexOf('M')-1).trim();
+            millisToAdd += ((long)Integer.parseInt(d)) * 60 * 60 * 60 * 1000;
+
+            System.out.println("DATE: " + mDate);
+            System.out.println("Time is " + millisToAdd);
+
+            Date date = new Date(millisToAdd); // Convert mDate to date TODO
+            ListActivity.eventStorage.addEvent(mOrg, date, null, mLoc, mOcrText, null);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        // Have user confirm and send to backend
+        // Add event to storage (probably not our problem)
+        // Update our view to show the new event
         // Do something with strings and call next activity
 
-        if(keyPhrases == null) {
+        if(keyEntities == null) {
             Toast.makeText(getApplicationContext(), "No text found", Toast.LENGTH_LONG).show();
         } else {
             finish();
@@ -75,12 +123,34 @@ public class ConfirmActivity extends AppCompatActivity {
                         new OnSuccessListener<FirebaseVisionText>() {
                             @Override
                             public void onSuccess(FirebaseVisionText texts) {
-                                keyPhrases = processTextRecognitionResult(texts);
-                                for (KeyPhrase key : keyPhrases){
-                                    Log.v("FlyerScanner-OCR", key.getText());
+                                keyEntities = processTextRecognitionResult(texts);
+                                if (keyEntities != null) {
+                                    float dateConf = 0.0f;
+                                    float orgConf = 0.0f;
+                                    float locConf = 0.0f;
+
+                                    for (Entity key : keyEntities) {
+                                        Log.v("FlyerScanner-OCR", key.getText());
+                                        if (key.getType().contains("DATE")){
+                                            if (key.getScore() > dateConf){
+                                                mDate = key.getText();
+                                                dateConf = key.getScore();
+                                            }
+                                        } else if (key.getType().contains("ORGANIZATION")){
+                                            if (key.getScore() > orgConf){
+                                                mOrg = key.getText();
+                                                orgConf = key.getScore();
+                                            }
+                                        } else if (key.getType().contains("LOCATION")){
+                                            if (key.getScore() > locConf){
+                                                mLoc = key.getText();
+                                                locConf = key.getScore();
+                                            }
+                                        }
+                                    }
+                                    continueButton.setText(getResources().getString(R.string.continue_button_label));
+                                    continueButton.setClickable(true);
                                 }
-                                continueButton.setText(getResources().getString(R.string.continue_button_label));
-                                continueButton.setClickable(true);
                             }
                         })
                 .addOnFailureListener(
@@ -93,7 +163,7 @@ public class ConfirmActivity extends AppCompatActivity {
                         });
     }
 
-    private List<KeyPhrase> processTextRecognitionResult(FirebaseVisionText texts) {
+    private List<Entity> processTextRecognitionResult(FirebaseVisionText texts) {
         List<FirebaseVisionText.TextBlock> blocks = texts.getTextBlocks();
         if (blocks.size() == 0) {
             Log.d("Block size", "block size is 0");
@@ -110,6 +180,7 @@ public class ConfirmActivity extends AppCompatActivity {
                 }
             }
         }
+        mOcrText = res;
         return NLP.NLP(res, this);
     }
 }

@@ -11,7 +11,7 @@ import java.util.PriorityQueue;
 
 public class ListActivity extends AppCompatActivity {
 
-    private EventStorage eventStorage;
+    static EventStorage eventStorage;
     private LinearLayout linearLayout;
     private HashMap<CheckBox, ComparableCalendar> map;
 
