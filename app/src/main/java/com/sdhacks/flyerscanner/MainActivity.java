@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 List<FirebaseVisionText.Element> elements = lines.get(j).getElements();
                 for (int k = 0; k < elements.size(); k++) {
                     FirebaseVisionText.Element temp = elements.get(k);
-                    res += temp.getText() + "\n";
+                    res += temp.getText() + " ";
               //      GraphicOverlay.Graphic textGraphic = new TextGraphic(mGraphicOverlay, elements.get(k));
           //          mGraphicOverlay.add(textGraphic);
 
@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView textViewToChange = (TextView) findViewById(R.id.hello);
         textViewToChange.setText(res);
+        Log.v("Flyer-OCR", res);
 
     }
 
