@@ -4,21 +4,27 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Attach;
 import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.DtStamp;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.Location;
+import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Summary;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Version;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.PriorityQueue;
 
 public class EventStorage
@@ -29,21 +35,21 @@ public class EventStorage
     public EventStorage(String folderPath) throws IOException, ParserException
     {
         this.queue = new PriorityQueue<>();
-        File folder = new File(folderPath);
-        File[] icsFolder = folder.listFiles();
-        for (File f : icsFolder)
-        {
-            if (f != null)
-            {
-                if (f.getAbsolutePath().endsWith(".ics"))
-                {
-                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
-                    CalendarBuilder builder = new CalendarBuilder();
-                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
-                    queue.add(calendar);
-                }
-            }
-        }
+//        File folder = new File(folderPath);
+//        File[] icsFolder = folder.listFiles();
+//        for (File f : icsFolder)
+//        {
+//            if (f != null)
+//            {
+//                if (f.getAbsolutePath().endsWith(".ics"))
+//                {
+//                    FileInputStream fis = new FileInputStream(f.getAbsolutePath());
+//                    CalendarBuilder builder = new CalendarBuilder();
+//                    ComparableCalendar calendar = (ComparableCalendar) builder.build(fis);
+//                    queue.add(calendar);
+//                }
+//            }
+//        }
 
     }
 
@@ -58,11 +64,23 @@ public class EventStorage
     {
         PropertyList<Property> propertyList = new PropertyList<>();
 
-        propertyList.add(new DtStart(new net.fortuna.ical4j.model.Date(startDate)));
-        propertyList.add(new DtEnd(new net.fortuna.ical4j.model.Date(endDate)));
+        DtStart start = new DtStart();
+        DtEnd end = new DtEnd();
+
+        start.setDate(new net.fortuna.ical4j.model.DateTime(startDate));
+        end.setDate(new net.fortuna.ical4j.model.DateTime(endDate));
+
+        propertyList.add(start);
+        propertyList.add(end);
+
         propertyList.add(new Summary(summary));
         propertyList.add(new Description(comment));
         propertyList.add(new Location(locationString));
+
+        long timestamp = Instant.now().toEpochMilli();
+        propertyList.add(new DtStamp(new DateTime(timestamp)));
+        String uidString = timestamp +  "@hostname";
+        propertyList.add(new Uid(uidString)); // right now hostname is hardcoded
 
         FileInputStream fis = new FileInputStream(attachmentImage);
         byte[] bArray = new byte[(int) attachmentImage.length()];
@@ -85,7 +103,10 @@ public class EventStorage
 
         ComponentList<CalendarComponent> compList = new ComponentList<>();
         compList.add(newEv);
-        ComparableCalendar cal = new ComparableCalendar(compList);
+        PropertyList<Property> calPropList = new PropertyList<>();
+        calPropList.add(new ProdId("com.sdhacks.flyerscanner"));
+        calPropList.add(Version.VERSION_2_0);
+        ComparableCalendar cal = new ComparableCalendar(calPropList, compList);
         queue.add(cal);
         return returnCode;
 
