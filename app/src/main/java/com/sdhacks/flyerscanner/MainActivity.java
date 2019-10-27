@@ -1,14 +1,6 @@
 package com.sdhacks.flyerscanner;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,6 +14,11 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
 
-    private GraphicOverlay mGraphicOverlay;
     private String currentPhotoPath;
 
     private String mCurrentPhotoPath;
@@ -70,22 +66,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dispatchTakePictureIntent() {
-        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-        */
-
 
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        //file = Uri.fromFile(getFile());
-        //cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,file);
-        //if(cameraIntent.resolveActivity(getPackageManager())!=null)
-        //{
-        //    startActivityForResult(cameraIntent, RESULT_TAKE_PHOTO);
-        //}
 
         Intent chooser = new Intent(Intent.ACTION_CHOOSER);
         chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
@@ -132,15 +115,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } else {
-
-                try {
-                    //help1 = MediaStore.Images.Media.getBitmap(getContentResolver(),file);
-                    //runTextRecognition(help1);
-                    //return;
-                    //imageView.setImageBitmap( thumbnail.extractThumbnail(help1,help1.getWidth(),help1.getHeight()));
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
 
 
                 // this case will occur when taking a picture with a camera
@@ -241,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             showToast("No text found");
             return;
         }
-//        mGraphicOverlay.clear();
         String res = "";
         for (int i = 0; i < blocks.size(); i++) {
             List<FirebaseVisionText.Line> lines = blocks.get(i).getLines();
@@ -250,9 +223,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int k = 0; k < elements.size(); k++) {
                     FirebaseVisionText.Element temp = elements.get(k);
                     res += temp.getText() + " ";
-              //      GraphicOverlay.Graphic textGraphic = new TextGraphic(mGraphicOverlay, elements.get(k));
-          //          mGraphicOverlay.add(textGraphic);
-
                 }
             }
         }
