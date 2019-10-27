@@ -65,7 +65,8 @@ public class ListActivity extends AppCompatActivity {
         for(ComparableCalendar currentCalendar : queue) {
             CheckBox checkBox = new CheckBox(getApplicationContext());
             map.put(checkBox, currentCalendar);
-            String text = currentCalendar.getDescription() + currentCalendar.getStartDate() + " - " + currentCalendar.getEndDate() + " @ " + currentCalendar.getLocation();
+            // Add start and end date
+            String text = currentCalendar.getDescription() + " @ " + currentCalendar.getLocation();
             checkBox.setText(text);
             linearLayout.addView(checkBox);
         }
