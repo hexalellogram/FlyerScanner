@@ -1,69 +1,113 @@
 package com.sdhacks.flyerscanner;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.amazonaws.services.comprehend.model.KeyPhrase;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import com.camerakit.CameraKitView;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private static final String MODEL_PATH = "mobilenet_quant_v1_224.tflite";
-    private static final boolean QUANT = true;
-    private static final String LABEL_PATH = "labels.txt";
-    private static final int INPUT_SIZE = 224;
-    private static final int RESULT_LOAD_IMAGE = 29;
-    private static final int RESULT_TAKE_PHOTO=13;
-
-    private Classifier classifier;
-    private Executor executor = Executors.newSingleThreadExecutor();
-
-    private String currentPhotoPath;
-
-    private String mCurrentPhotoPath;
-    private Bitmap help1;
-
-    private Uri file;
+    private CameraKitView cameraKitView;
+    private Button photoButton;
+    private Button listButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initTensorFlowAndLoadModel();
-        requestPermissionForReadExtertalStorage();
+
+        ConstraintLayout constraintLayout = findViewById(R.id.constraintLayout);
+        constraintLayout.setBackgroundColor(Color.BLACK);
+
+        cameraKitView = findViewById(R.id.camera);
+        photoButton = findViewById(R.id.photoButton);
+        listButton = findViewById(R.id.listButton);
+
+        photoButton.setOnClickListener(photoOnClickListener);
+    }
+
+    private View.OnClickListener photoOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            cameraKitView.captureImage(new CameraKitView.ImageCallback() {
+                @Override
+                public void onImage(CameraKitView view, final byte[] photo) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+
+                                Intent confirmIntent = new Intent(getApplicationContext(), ConfirmActivity.class);
+                                confirmIntent.putExtra(getResources().getString(R.string.image_bytes), photo);
+                                startActivity(confirmIntent);
+                                // TODO handle the photo being taken
+
+                                /*final Jpeg jpeg = new Jpeg(photo);
+                                imageView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageView.setJpeg(jpeg);
+                                    }
+                                });*/
+                                //Bitmap bitmap = BitmapFactory.decodeByteArray(photo, 0, photo.length);
+                                //imageView.setImageBitmap(bitmap);
+                                /*String path = getFilesDir().getAbsolutePath() + "//photo.jpg";
+                                File file = new File(path);
+                                if(file.exists()) {
+                                    file.delete();
+                                }
+                                FileOutputStream stream = new FileOutputStream(path);
+                                stream.write(photo);
+                                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                                imageView.setImageBitmap(bitmap);*/
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            });
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        cameraKitView.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cameraKitView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        cameraKitView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        cameraKitView.onStop();
+        super.onStop();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void onListButtonClicked(View view) {
+        Intent listIntent = new Intent(this, ListActivity.class);
+        startActivity(listIntent);
     }
 
     private void dispatchTakePictureIntent() {

@@ -2,53 +2,43 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ConfirmActivity">
 
-    <com.camerakit.CameraKitView
-        android:id="@+id/camera"
+    <com.jpegkit.JpegImageView
+        android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_margin="16dp"
         android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true"
-        android:keepScreenOn="true"
-        app:layout_constraintBottom_toTopOf="@+id/photoButton"
+        android:alpha="1.0"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@+id/retakeButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/photoButton"
+        android:id="@+id/retakeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Take Picture"
+        android:onClick="onRetakeClick"
+        android:text="Retake"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/camera" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/listButton"
+        android:id="@+id/continueButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:onClick="onListButtonClicked"
-        android:text="View Events"
+        android:onClick="onContinueClick"
+        android:text="Continue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
-    <!-- keep screen awake while CameraKitView is active -->
-
-
-    app:camera_flash="auto"
-    app:camera_facing="back"
-    app:camera_focus="continuous"
-    app:camera_permissions="camera" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
