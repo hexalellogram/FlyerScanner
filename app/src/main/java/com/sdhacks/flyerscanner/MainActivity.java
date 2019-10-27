@@ -303,6 +303,77 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
         }
     }
+    
+    private void initTensorFlowAndLoadModel() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    classifier = TensorFlowImageClassifier.create(
+                            getAssets(),
+                            MODEL_PATH,
+                            LABEL_PATH,
+                            INPUT_SIZE,
+                            QUANT);
+                    //makeButtonVisible();
+                } catch (final Exception e) {
+                    throw new RuntimeException("Error initializing TensorFlow!", e);
+                }
+            }
+        });
+    }
+
+    private void runTextRecognition(Bitmap mSelectedImage) {
+        ImageView img = findViewById(R.id.imageView);
+        img.setImageBitmap(mSelectedImage);
+
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(mSelectedImage);
+        FirebaseVisionTextRecognizer recognizer = FirebaseVision.getInstance()
+                .getOnDeviceTextRecognizer();
+        //mTextButton.setEnabled(false);
+        recognizer.processImage(image)
+                .addOnSuccessListener(
+                        new OnSuccessListener<FirebaseVisionText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionText texts) {
+                                //mTextButton.setEnabled(true);
+                                processTextRecognitionResult(texts);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Task failed with an exception
+                                //mTextButton.setEnabled(true);
+                                e.printStackTrace();
+                            }
+                        });
+    }
+
+    List<KeyPhrase> processTextRecognitionResult(FirebaseVisionText texts) {
+        List<FirebaseVisionText.TextBlock> blocks = texts.getTextBlocks();
+        if (blocks.size() == 0) {
+            showToast("No text found");
+            return null;
+        }
+        String res = "";
+        for (int i = 0; i < blocks.size(); i++) {
+            List<FirebaseVisionText.Line> lines = blocks.get(i).getLines();
+            for (int j = 0; j < lines.size(); j++) {
+                List<FirebaseVisionText.Element> elements = lines.get(j).getElements();
+                for (int k = 0; k < elements.size(); k++) {
+                    FirebaseVisionText.Element temp = elements.get(k);
+                    res += temp.getText() + " ";
+                }
+            }
+        }
+        TextView textViewToChange = (TextView) findViewById(R.id.hello);
+        textViewToChange.setText(res);
+        Log.v("Flyer-OCR", res);
+        return NLP.NLP(res);
+
+    }
 
 
 }
