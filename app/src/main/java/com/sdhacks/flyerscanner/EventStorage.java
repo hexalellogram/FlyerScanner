@@ -67,8 +67,8 @@ public class EventStorage
         {
             Calendar cal = Calendar.getInstance(); // creates calendar
             cal.setTime(startDate); // sets calendar time/date
-            cal.add(Calendar.HOUR_OF_DAY, 2); // adds one hour
-            endDate = cal.getTime(); // returns new date object, one hour in the future
+            cal.add(Calendar.HOUR_OF_DAY, 2); // add two hours
+            endDate = cal.getTime(); // returns new date object, two hours in the future
         }
         PropertyList<Property> propertyList = new PropertyList<>();
 
