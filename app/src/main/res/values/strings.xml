@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">FlyerScanner</string>
-    <string name="hello">Rate</string>
-    <string name="image_bytes">IMAGE</string>
-    <string name="continue_button_label">Continue</string>
-</resources>
