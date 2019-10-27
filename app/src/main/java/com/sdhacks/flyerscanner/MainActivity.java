@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.amazonaws.services.comprehend.model.KeyPhrase;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -209,11 +210,11 @@ public class MainActivity extends AppCompatActivity {
                         });
     }
 
-    private void processTextRecognitionResult(FirebaseVisionText texts) {
+    List<KeyPhrase> processTextRecognitionResult(FirebaseVisionText texts) {
         List<FirebaseVisionText.TextBlock> blocks = texts.getTextBlocks();
         if (blocks.size() == 0) {
             showToast("No text found");
-            return;
+            return null;
         }
         String res = "";
         for (int i = 0; i < blocks.size(); i++) {
@@ -229,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textViewToChange = (TextView) findViewById(R.id.hello);
         textViewToChange.setText(res);
         Log.v("Flyer-OCR", res);
+        return NLP.NLP(res);
 
     }
 

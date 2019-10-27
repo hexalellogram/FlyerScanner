@@ -3,9 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+
+    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "com.sdhacks.flyerscanner"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -19,6 +22,20 @@ android {
     }
     aaptOptions {
         noCompress "tflite"
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
     }
 
 }
@@ -36,6 +53,44 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
     implementation 'com.google.firebase:firebase-ml-vision-face-model:17.0.2'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:18.0.0'
+
+    //compile ('org.apache.httpcomponents:httpclient:4.5.9'){
+    //    exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    //}
+    /*compile ('org.apache.httpcomponents:httpcore:4.4.11'){
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+
+    implementation 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+    //compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.9'
+*/
+    //compile ('com.amazonaws:aws-java-sdk-bom:1.11.228'){
+    //    exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    //    exclude group: 'org.apache.httpcomponents', module: 'httpcore'
+    //}
+
+    //compile ('com.amazonaws:aws-java-sdk-comprehend:1.11.659'){
+    //    exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    //    exclude group: 'org.apache.httpcomponents', module: 'httpcore'
+    //}
+    //implementation 'com.amazonaws:aws-java-sdk-comprehend:2.6.30'
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-android-sdk-comprehend
+    //compile group: 'com.amazonaws', name: 'aws-android-sdk-comprehend', version: '2.16.1'
+    implementation 'com.amazonaws:aws-android-sdk-comprehend:2.16.1'
+
+
+
+    //implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.228')
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-comprehend
+    //implementation 'com.amazonaws:aws-java-sdk-comprehend:1.11.659'
+    //compile group: 'com.amazonaws', name: 'aws-java-sdk-comprehend', version: '1.11.659'
+
+
+
+
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
