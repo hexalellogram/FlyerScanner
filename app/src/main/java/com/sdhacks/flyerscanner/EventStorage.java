@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -84,6 +85,11 @@ public class EventStorage
 
         try
         {
+            // wipe the file
+            PrintWriter write = new PrintWriter(file);
+            write.print("");
+            write.close();
+
             // Initialize FileWriter to write Strings into JSON file.
             writer = new FileWriter(fp + "/queue.json");
 
