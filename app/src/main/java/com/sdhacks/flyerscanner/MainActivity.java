@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.camerakit.CameraKitView;
@@ -33,24 +34,20 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener photoOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            cameraKitView.captureImage(new CameraKitView.ImageCallback() {
-                @Override
-                public void onImage(CameraKitView view, final byte[] photo) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
+            Log.v("FlyerScanner-onclick", "Outer most Onclick triggered");
+            cameraKitView.captureImage((view, photo) -> {
+                Log.v("FlyerScanner-onclick", "Onclick triggered");
+                new Thread(() -> {
+                    try {
+                        Log.v("FlyerScanner-inneronclick", "We have started this intent");
+                        Intent confirmIntent = new Intent(getApplicationContext(), ConfirmActivity.class);
+                        confirmIntent.putExtra(getResources().getString(R.string.image_bytes), photo);
+                        startActivity(confirmIntent);
 
-                                Intent confirmIntent = new Intent(getApplicationContext(), ConfirmActivity.class);
-                                confirmIntent.putExtra(getResources().getString(R.string.image_bytes), photo);
-                                startActivity(confirmIntent);
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         }
     };
