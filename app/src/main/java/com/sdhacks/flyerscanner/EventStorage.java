@@ -58,64 +58,66 @@ public class EventStorage
     Return codes:
     0 = added new event
     1 = modified existing event
+    2 = error
      */
     public int addEvent(String summary, java.util.Date startDate, java.util.Date endDate,
-                        String locationString, String comment, File attachmentImage)
-            throws IOException, Exception
+                        String locationString, String comment, byte[] attachmentImage)
     {
-        if (endDate == null)
-        {
-            Calendar cal = Calendar.getInstance(); // creates calendar
-            cal.setTime(startDate); // sets calendar time/date
-            cal.add(Calendar.HOUR_OF_DAY, 2); // add two hours
-            endDate = cal.getTime(); // returns new date object, two hours in the future
-        }
-        PropertyList<Property> propertyList = new PropertyList<>();
-
-        DtStart start = new DtStart();
-        DtEnd end = new DtEnd();
-
-        start.setDate(new net.fortuna.ical4j.model.DateTime(startDate));
-        end.setDate(new net.fortuna.ical4j.model.DateTime(endDate));
-
-        propertyList.add(start);
-        propertyList.add(end);
-
-        propertyList.add(new Summary(summary));
-        propertyList.add(new Description(comment));
-        propertyList.add(new Location(locationString));
-
-        long timestamp = Instant.now().toEpochMilli();
-        propertyList.add(new DtStamp(new DateTime(timestamp)));
-        String uidString = timestamp +  "@hostname";
-        propertyList.add(new Uid(uidString)); // right now hostname is hardcoded
-
-        FileInputStream fis = new FileInputStream(attachmentImage);
-        byte[] bArray = new byte[(int) attachmentImage.length()];
-        fis.read(bArray);
-        fis.close();
-
-        propertyList.add(new Attach(bArray));
-
-        VEvent newEv = new VEvent(propertyList);
-        VEvent findExisting = eventExists(newEv);
-
         int returnCode = 0;
+        try {
+            if (endDate == null) {
+                Calendar cal = Calendar.getInstance(); // creates calendar
+                cal.setTime(startDate); // sets calendar time/date
+                cal.add(Calendar.HOUR_OF_DAY, 2); // add two hours
+                endDate = cal.getTime(); // returns new date object, two hours in the future
+            }
+            PropertyList<Property> propertyList = new PropertyList<>();
 
-        if (findExisting != null) {
-            boolean result = deleteEvent(findExisting);
+            DtStart start = new DtStart();
+            DtEnd end = new DtEnd();
+
+            start.setDate(new net.fortuna.ical4j.model.DateTime(startDate));
+            end.setDate(new net.fortuna.ical4j.model.DateTime(endDate));
+
+            propertyList.add(start);
+            propertyList.add(end);
+
+            propertyList.add(new Summary(summary));
+            propertyList.add(new Description(comment));
+            propertyList.add(new Location(locationString));
+
+            long timestamp = Instant.now().toEpochMilli();
+            propertyList.add(new DtStamp(new DateTime(timestamp)));
+            String uidString = timestamp + "@" + android.os.Build.MODEL;
+            propertyList.add(new Uid(uidString)); // right now hostname is hardcoded
+
+            propertyList.add(new Attach(attachmentImage));
+
+            VEvent newEv = new VEvent(propertyList);
+            VEvent findExisting = eventExists(newEv);
+
+            if (findExisting != null) {
+                boolean result = deleteEvent(findExisting);
                 if (!result)
-                    throw new Exception();
-            returnCode = 1;
-        }
+                {
+                    returnCode = 2;
+                    return returnCode;
+                }
+                returnCode = 1;
+            }
 
-        ComponentList<CalendarComponent> compList = new ComponentList<>();
-        compList.add(newEv);
-        PropertyList<Property> calPropList = new PropertyList<>();
-        calPropList.add(new ProdId("com.sdhacks.flyerscanner"));
-        calPropList.add(Version.VERSION_2_0);
-        ComparableCalendar cal = new ComparableCalendar(calPropList, compList);
-        queue.add(cal);
+            ComponentList<CalendarComponent> compList = new ComponentList<>();
+            compList.add(newEv);
+            PropertyList<Property> calPropList = new PropertyList<>();
+            calPropList.add(new ProdId("com.sdhacks.flyerscanner"));
+            calPropList.add(Version.VERSION_2_0);
+            ComparableCalendar cal = new ComparableCalendar(calPropList, compList);
+            queue.add(cal);
+        }
+        catch(IOException ex)
+        {
+            returnCode = 2;
+        }
         return returnCode;
 
     }
