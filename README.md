@@ -24,7 +24,7 @@ We're proud to have used many modern frameworks to make a lightweight Android ap
 
 We learned how to use many modern technologies such as machine learning, optical character recognition, and natural language processing, while also utilizing the cloud to keep device overhead low.
 
-## What's next for Slug Assist
+## What's next for Flyer Scanner
 
 A useful addition to Flyer Scanner would be to port it to iOS as well. This way we would be able to target a larger audience.
 
@@ -32,3 +32,5 @@ In addition, some other useful features include:
 
 - Cloud synchronization
 - Possibly add event to a 3rd party service, such as Meetup
+- Sorting the list of events by different criteria
+- detecting and modifying previously added events in the user's calendar
